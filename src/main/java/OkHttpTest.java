@@ -56,16 +56,5 @@ public class OkHttpTest {
         System.out.println(response1.protocol());
         System.out.println(response1.receivedResponseAtMillis());
         */
-        System.out.println("=========WEATHER===========");
-
-        Request weatherRequest = new Request.Builder()
-                .url("http://dataservice.accuweather.com/forecasts/v1/daily/5day/294021?apikey=CB3CB4T8qXFPhnBCIVLnTUgk2kZVQ70A")
-                .build();
-
-        Response weatherResponse = client.newCall(weatherRequest).execute();
-
-        System.out.println(weatherResponse.code());
-        String body = Objects.requireNonNull(weatherResponse.body()).string();
-        System.out.println(body);
     }
 }

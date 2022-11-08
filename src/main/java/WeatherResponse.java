@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,5 +30,9 @@ public class WeatherResponse {
         System.out.println(weatherResponse.code());
         String body = Objects.requireNonNull(weatherResponse.body()).string();
         System.out.println(body);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        WeatherResult weatherResult = objectMapper.readValue(body, WeatherResult.class);
+        System.out.println(weatherResult);
     }
 }
