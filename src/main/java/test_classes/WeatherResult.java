@@ -1,3 +1,5 @@
+package test_classes;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -37,7 +39,7 @@ public class WeatherResult {
 
     @Override
     public String toString() {
-        return "WeatherResult{" +
+        return "test_classes.WeatherResult{" +
                 "date='" + date + '\'' +
                 ", temperature='" + temperature + '\'' +
                 ", city='" + city + '\'' +

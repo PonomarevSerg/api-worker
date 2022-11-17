@@ -1,3 +1,5 @@
+package test_classes;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +18,7 @@ public class Main {
 //        String jsonString = objectMapper.writeValueAsString(car);
 //        byte[] jsonBytes = objectMapper.writeValueAsBytes(car);
 
-//        Car carFromFile = objectMapper.readValue(new File("car.json"), Car.class);
+//        test_classes.Car carFromFile = objectMapper.readValue(new File("car.json"), test_classes.Car.class);
 //        System.out.println(carFromFile.toString());
         String carsList = "[{\"color\":\"red\", \"type\":\"BMW\"}," +
                 " {\"color\":\"black\", \"type\":\"LADA\"}]";

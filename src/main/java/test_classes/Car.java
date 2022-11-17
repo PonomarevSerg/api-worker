@@ -1,3 +1,5 @@
+package test_classes;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -40,7 +42,7 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{" +
+        return "test_classes.Car{" +
                 "color='" + color + '\'' +
                 ", type='" + type + '\'' +
                 '}';
