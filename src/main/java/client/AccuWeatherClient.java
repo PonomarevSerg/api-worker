@@ -2,6 +2,8 @@ package client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import model.current_conditions.CurrentConditionsRoot;
 import model.five_day_weather.FiveDayRoot;
 import model.locations.TopCitiesCount;
@@ -15,19 +17,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+@AllArgsConstructor
 public class AccuWeatherClient {
     private final ObjectMapper objectMapper;
     private final OkHttpClient okHttpClient;
+    private String apikey; // CB3CB4T8qXFPhnBCIVLnTUgk2kZVQ70A
 
-    public AccuWeatherClient(ObjectMapper objectMapper,
-                             OkHttpClient okHttpClient) {
-        this.objectMapper = objectMapper;
-        this.okHttpClient = okHttpClient;
-    }
+
+//    public AccuWeatherClient(ObjectMapper objectMapper,
+//                             OkHttpClient okHttpClient) {
+//        this.objectMapper = objectMapper;
+//        this.okHttpClient = okHttpClient;
+//    }
 
     public List<TopCitiesRoot> getTopCities(TopCitiesCount topCitiesCount) throws IOException {
         Request request = new Request.Builder()
-                .url("http://dataservice.accuweather.com/locations/v1/topcities/" + topCitiesCount.getCount() + "?apikey=CB3CB4T8qXFPhnBCIVLnTUgk2kZVQ70A")
+                .url("http://dataservice.accuweather.com/locations/v1/topcities/" + topCitiesCount.getCount() + "?apikey=" + apikey)
                 .build();
 
         System.out.println("Sending rq..." + request);
@@ -42,7 +47,7 @@ public class AccuWeatherClient {
     public List<CurrentConditionsRoot> getCurrentCondition (TopCitiesRoot topCitiesRoot) throws IOException {
 
         Request request = new Request.Builder()
-                .url("http://dataservice.accuweather.com/currentconditions/v1/" + topCitiesRoot.key + "?apikey=CB3CB4T8qXFPhnBCIVLnTUgk2kZVQ70A")
+                .url("http://dataservice.accuweather.com/currentconditions/v1/" + topCitiesRoot.key + "?apikey=" + apikey)
                 .build();
 
         System.out.println("Sending rq..." + topCitiesRoot.englishName + "\n" + request);
@@ -56,7 +61,7 @@ public class AccuWeatherClient {
 
     public FiveDayRoot getFiveDayForecast(TopCitiesRoot topCitiesRoot) throws IOException {
         Request request = new Request.Builder()
-                .url("http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + topCitiesRoot.key + "?apikey=CB3CB4T8qXFPhnBCIVLnTUgk2kZVQ70A")
+                .url("http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + topCitiesRoot.key + "?apikey=" + apikey)
                 .build();
 
         System.out.println("Sending rq..." + topCitiesRoot.englishName + "\n" + request);

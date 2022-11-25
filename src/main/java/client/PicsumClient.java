@@ -1,59 +1,61 @@
 package client;
 
-import okhttp3.OkHttpClient;
-
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
-import java.util.Arrays;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PicsumClient {
-    private final OkHttpClient okHttpClient;
-    private final Map <String, String> imgCache = new HashMap<>();
+    private final Map<String, String> hexToPathCache = new HashMap<>();
 
-    public Map<String, String> getImgCache() {
-        return imgCache;
+    private final UrlToPathCache urlToPathCache;
+
+    public PicsumClient(UrlToPathCache urlToPathCache) {
+        this.urlToPathCache = urlToPathCache;
     }
 
-    public PicsumClient(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public Map<String, String> getHexToPathCache() {
+        return Collections.unmodifiableMap(hexToPathCache);
     }
 
-
-
-    public String downloadImageByUrl (String url1) throws IOException {
-        URL url = new URL(url1);
+    public void downloadImageByUrl(URL url) throws IOException {
+        System.out.println("Downloading image by url:" + url + "...");
         BufferedImage img = ImageIO.read(url);
-        File file = new File("C:\\Users\\MSI\\Desktop\\Courses\\api-worker\\src\\main\\resources\\image\\image" + imgCache.size() + ".jpg");
-        if (!file.exists()) {
-            ImageIO.write(img, "jpg", file);
-        }
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(img, "jpg", byteArrayOutputStream);
-        byte[] temp = byteArrayOutputStream.toByteArray();
-        imgCache.put(Arrays.toString(temp), file.getAbsolutePath());
-        System.out.println("File downloaded successfully!");
-        return file.getAbsolutePath();
-    }
+        System.out.println("Image download successful!");
 
-    public String isSameImage (String filePath) throws IOException {
-        File file = new File(filePath);
-        BufferedImage img = ImageIO.read(file);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(img, "jpg", byteArrayOutputStream);
-        byte[] temp = byteArrayOutputStream.toByteArray();
-        if (!imgCache.containsKey(Arrays.toString(temp))) {
-            imgCache.put(Arrays.toString(temp), file.getAbsolutePath());
-            return imgCache.get(Arrays.toString(temp));
+
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            byte[] md5ImgHash = md5.digest(byteArrayOutputStream.toByteArray());
+
+            String hexBinaryImgHash = DatatypeConverter.printHexBinary(md5ImgHash);
+            System.out.println("Image was hashed with hexBinary: " + hexBinaryImgHash);
+
+            if (hexToPathCache.containsKey(hexBinaryImgHash) ||
+                    urlToPathCache.getUrlToPathCache().containsValue(getHexToPathCache().get(hexBinaryImgHash))) {
+                String path = getHexToPathCache().get(hexBinaryImgHash);
+                System.out.println("Image already exist by path:" + path);
+                urlToPathCache.updateCache(url.toString(), path);
+            }
+
+            String path = "src/main/resources/image/" + hexBinaryImgHash + ".jpg";
+            try (OutputStream outputStream = new FileOutputStream(path)) {
+                byteArrayOutputStream.writeTo(outputStream);
+                hexToPathCache.put(hexBinaryImgHash, path);
+                urlToPathCache.updateCache(url.toString(), path);
+                System.out.println("File was saved to: " + path);
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        System.out.println("File already exists. Path:\n");
-        boolean b = file.delete();
-        return imgCache.get(Arrays.toString(temp));
     }
 }
